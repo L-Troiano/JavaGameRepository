@@ -39,7 +39,7 @@ public class FrameTester implements WindowListener {
 		Image icon = new ImageIcon("images/icon.png").getImage();
 		
 		frame.setIconImage(icon);
-		frame.setFocusable(false);
+		frame.setFocusable(true);
 		imagePanelTable = new ImagePanel();
 		imagePanelTable.setFocusable(true);
 		contentPane.add(imagePanelTable);
