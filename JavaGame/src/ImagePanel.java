@@ -10,9 +10,7 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
-
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 
@@ -27,10 +25,6 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Image img;	
 	public boolean solved;
 
-	
-	public ImagePanel(){
-		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "pressed");
-	}
 	
 	public void paintComponent(final Graphics g) {
 		
@@ -88,12 +82,12 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	public void keyPressed(KeyEvent arg0) {
 
 		if('k' == arg0.getKeyChar()){
-			dashBoard2 = new Rectangle(300,(int)dashBoard2.getY()+8,20,80);
+			dashBoard2.setBounds(300,(int)dashBoard2.getY()+14,20,80);
 			
 		}
 		
 		if('i' == arg0.getKeyChar()){
-			dashBoard2 = new Rectangle(300,(int)dashBoard2.getY()-8,20,80);
+			dashBoard2.setBounds(300,(int)dashBoard2.getY()-14,20,80);
 			
 		}
 		
@@ -103,13 +97,13 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-	
+		
 	}
 
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-
+		
 	}
 	
 
