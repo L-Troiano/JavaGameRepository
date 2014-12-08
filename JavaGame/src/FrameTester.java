@@ -13,11 +13,14 @@ public class FrameTester implements WindowListener {
 	private JFrame frame;
 	private ImagePanel imagePanelTable;
 	
+	private static final int width = 800;
+	private static final int height = 400;
+	
 	public FrameTester() {
 		
 		// Frame
 		frame = new JFrame();
-		frame.setSize(600, 400);
+		frame.setSize(width, height);
 		frame.setTitle("Assault");
 		frame.setLocation(250, 55);
 		frame.setResizable(false);
@@ -40,7 +43,11 @@ public class FrameTester implements WindowListener {
 		
 		frame.setIconImage(icon);
 		frame.setFocusable(true);
-		imagePanelTable = new ImagePanel();
+		
+		Game game = new Game();
+		game.setTableWidth(width);
+		game.setTableHeight(height);
+		imagePanelTable = new ImagePanel(game);
 		imagePanelTable.setFocusable(true);
 		contentPane.add(imagePanelTable);
 		//ImagePanel imagePanelVerde = new ImagePanel(new ImageIcon(verde).getImage());

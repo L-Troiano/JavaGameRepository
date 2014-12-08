@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -18,13 +19,21 @@ import javax.swing.Timer;
 public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 
-	Ellipse2D palla = new Ellipse2D.Double(0,0,40,40);
-	Rectangle dashBoard2 = new Rectangle(300,70,20,80); 
+	Ellipse2D palla;
+	Rectangle dashBoard2;
 	Timer timer = new Timer(7,this);
 	int velX=2, velY=2;
 	private Image img;	
 	public boolean solved;
 
+	
+	public ImagePanel(Game game){
+		
+		palla = new Ellipse2D.Double(0,0,20,20);
+		dashBoard2 = new Rectangle(50,game.getTableHeight()/2-60,15,60); 
+		
+	}
+	
 	
 	public void paintComponent(final Graphics g) {
 		
@@ -49,30 +58,39 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		Point2D.Double terzoVertice = new Point2D.Double((double)secondo.getX(),(double)secondo.getY()+secondo.getHeight());
 		Point2D.Double quartoVertice = new Point2D.Double((double)secondo.getX()+secondo.getWidth(),(double)secondo.getY()+secondo.getHeight());
 		
+		Rectangle2D.Double ball = new Rectangle2D.Double(palla.getX(), palla.getY(), 20, 20);
 		
-		return primo.contains(primoVertice) || primo.contains(secondoVertice) || primo.contains(terzoVertice) || primo.contains(quartoVertice);
+		return primo.intersects(ball);
+		//return primo.contains(primoVertice) || primo.contains(secondoVertice) || primo.contains(terzoVertice) || primo.contains(quartoVertice);
 		
 	}
 
 
 	
 	public void actionPerformed(ActionEvent arg0) {
-		if(palla.getX()<0 || palla.getX()>550){
-			velX = -velX;
-			
-		}
 		
-		if(palla.getY()<0 || palla.getY()>330){
-			velY = -velY;
-			
-		}
+		boolean collisione = isCollisione(dashBoard2, palla);
 		
 		double x = palla.getX();
 		double y = palla.getY();
+		
+		if(x < 0 || x > 573 || collisione) {
+			
+			velX = -velX;
+		} 
+		
+		if(y < 0 || y > 350 || collisione){
+			
+			velY = -velY;
+		}
+		
+		
+			
+			
 		x = x + velX;
 		y = y + velY;		
 		
-		palla = new Ellipse2D.Double(x,y,40,40);
+		palla = new Ellipse2D.Double(x,y,20,20);
 		repaint();
 		
 	}
@@ -81,16 +99,17 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 
-		if('k' == arg0.getKeyChar()){
-			dashBoard2.setBounds(300,(int)dashBoard2.getY()+14,20,80);
+		double y = dashBoard2.getY();
+		
+		if('k' == arg0.getKeyChar() && y <= (400 - dashBoard2.height-40) ){
 			
+			dashBoard2.setBounds(50,(int)dashBoard2.getY()+14,15,60);
 		}
 		
-		if('i' == arg0.getKeyChar()){
-			dashBoard2.setBounds(300,(int)dashBoard2.getY()-14,20,80);
+		if('i' == arg0.getKeyChar() && y >= 0){
 			
+			dashBoard2.setBounds(50,(int)dashBoard2.getY()-14,15,60);
 		}
-		
 		
 	}
 
