@@ -11,8 +11,16 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.TimerTask;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -28,7 +36,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Rectangle2D.Double campo;
 	private Rectangle2D.Double pallaTest; 
 	Timer timer = new Timer(7,this);
-	int velX=3, velY=3, shift = 20;
+	int velX=4, velY=4, shift = 20;
 	
 	private Image background;
 	private int player2Score=0;
@@ -61,7 +69,24 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
                 if (i< 0)
                 	countdown.cancel();
             }
-        }, 0, 1000);	
+        }, 0, 1000);
+		
+		 File soundFile = new File(Schema.PATH_MUSICA);
+		    AudioInputStream sound;
+			try {
+				sound = AudioSystem.getAudioInputStream(soundFile);
+				
+			    // load the sound into memory (a Clip)
+			    DataLine.Info info = new DataLine.Info(Clip.class, sound.getFormat());
+			    Clip clip = (Clip) AudioSystem.getLine(info);
+			    clip.open(sound);
+			    clip.start();
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+	
 		
 	}
 	
