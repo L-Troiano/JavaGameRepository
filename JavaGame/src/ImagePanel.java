@@ -11,10 +11,12 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 
 
 @SuppressWarnings("serial")
@@ -29,12 +31,16 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	int velX=3, velY=3, shift = 20;
 	
 	private Image background;
+	private int player2Score=0;
+	private int player1Score=0;
+	private int secondi;
 	
 	
 	
 	public ImagePanel(Game game,String image){
 		
-		
+
+    
 		background = new ImageIcon(image).getImage();
 		 
 	 
@@ -46,6 +52,16 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		pallaTest = new Rectangle2D.Double(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 		
 		
+		final java.util.Timer countdown = new java.util.Timer();
+		countdown.scheduleAtFixedRate(new TimerTask() {
+            int i = Integer.parseInt("150");
+			
+            public void run() {
+                secondi = i--;
+                if (i< 0)
+                	countdown.cancel();
+            }
+        }, 0, 1000);	
 		
 	}
 	
@@ -55,7 +71,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		if (campo ==null){
 			campo = new Rectangle2D.Double(0,0,this.getWidth(),this.getHeight());
 			dashBoard2 = new Rectangle2D.Double(50,(this.getHeight()-Schema.DashBoard2Height)/2,15,Schema.DashBoard2Height);
-			
+					
 		}
 		
 		super.paintComponent(g);
@@ -66,6 +82,9 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 		g2.setBackground(Color.blue);
 		g2.setColor(Color.white);
+		g2.drawString(String.valueOf(secondi), 400, 20);
+		g2.drawString("Punteggio giocatore 1:   "+ String.valueOf(player1Score), 20, 20);
+		g2.drawString("Punteggio giocatore 2:   "+ String.valueOf(player2Score), 700, 20);
 		g2.fill(palla);
 		g2.fill(dashBoard2);
 		timer.start();
@@ -92,7 +111,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 	}
 	
-	private boolean isCollisioneOrizzontalePalla(Ellipse2D palla, Rectangle2D rettangolo){
+	private boolean isCollisioneOrizzontalePalla(Ellipse2D palla, Rectangle2D rettangolo,boolean conta){
 		
 		
 		Point2D.Double primoVertice = new Point2D.Double(rettangolo.getX(),rettangolo.getY());
@@ -106,7 +125,17 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		pallaTest.setRect(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 		
-		return linea_sinistra.intersects(pallaTest) || linea_destra.intersects(pallaTest);
+		boolean collisioneSinistra = linea_sinistra.intersects(pallaTest);
+		boolean collisioneDestra = linea_destra.intersects(pallaTest);
+		
+		if(conta && collisioneSinistra){
+			player2Score++;
+		}
+		if(conta && collisioneDestra){
+			player1Score++;
+		}
+		
+		return collisioneSinistra || collisioneDestra;
 		
 	}
 
@@ -119,7 +148,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		double x = palla.getX();
 		double y = palla.getY();
 		
-		if(isCollisioneOrizzontalePalla(palla,campo) || isCollisioneOrizzontalePalla(palla,dashBoard2)) {
+		if(isCollisioneOrizzontalePalla(palla,campo,true) || isCollisioneOrizzontalePalla(palla,dashBoard2,false)) {
 			
 			velX = -velX;
 		} 
