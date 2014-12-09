@@ -13,8 +13,8 @@ public class FrameTester implements WindowListener {
 	private JFrame frame;
 	private ImagePanel imagePanelTable;
 	
-	private static final int width = 800;
-	private static final int height = 400;
+	private static final int width = 900;
+	private static final int height = 500;
 	
 	public FrameTester() {
 		
@@ -39,29 +39,20 @@ public class FrameTester implements WindowListener {
 		
 		
 		
-		Image icon = new ImageIcon("images/icon.png").getImage();
 		
-		frame.setIconImage(icon);
+		
+		
 		frame.setFocusable(true);
 		
 		Game game = new Game();
 		game.setTableWidth(width);
 		game.setTableHeight(height);
-		imagePanelTable = new ImagePanel(game,new ImageIcon(Schema.PATH_SFONDO).getImage());
+
+		imagePanelTable = new ImagePanel(game,Schema.PATH_SFONDO);
 		imagePanelTable.setFocusable(true);
 		contentPane.add(imagePanelTable);
-		//ImagePanel imagePanelVerde = new ImagePanel(new ImageIcon(verde).getImage());
-		
-		/*
-		JButton btn = new JButton("TRY");
-		btn.setLayout(null);
-		btn.setBounds(200, 350, 100, 100);
-		btn.setBorder(null);
-		btn.setContentAreaFilled(false);
-		contentPane.add(btn);
-		*/
+
 		frame.addKeyListener(imagePanelTable);
-		
 		frame.setVisible(true);
 		frame.addWindowListener(this);
 	}

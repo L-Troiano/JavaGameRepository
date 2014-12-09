@@ -26,29 +26,23 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Rectangle2D.Double campo;
 	private Rectangle2D.Double pallaTest; 
 	Timer timer = new Timer(7,this);
-	int velX=2, velY=2;
-	private Image img;
+	int velX=3, velY=3, shift = 20;
 	
-	  public ImagePanel(Game game,String img) {
-		    this(game,new ImageIcon(img).getImage());
-	  }
-
+	private Image background;
 	
-	public ImagePanel(Game game,Image image){
+	
+	
+	public ImagePanel(Game game,String image){
 		
 		
-	    this.img = image;
-	    Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
-	    setPreferredSize(size);
-	    setMinimumSize(size);
-	    setMaximumSize(size);
-	    setSize(size);
-	    setLayout(null);
-		
-		
+		background = new ImageIcon(image).getImage();
+		 
+	 
+		Dimension size = new Dimension(background.getWidth(null), background.getHeight(null));
+		setPreferredSize(size);
+		setLayout(null);
 		palla = new Ellipse2D.Double(1,10,20,20);
-		dashBoard2 = new Rectangle2D.Double(50,game.getTableHeight()/2-60,15,60); 
-		campo = new Rectangle2D.Double(0,0,game.getTableWidth(),game.getTableHeight());
+		 		
 		pallaTest = new Rectangle2D.Double(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 		
 		
@@ -58,18 +52,27 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	
 	public void paintComponent(Graphics g) {
 		
-		g.drawImage(img, 0, 0, null);
+		if (campo ==null){
+			campo = new Rectangle2D.Double(0,0,this.getWidth(),this.getHeight());
+			dashBoard2 = new Rectangle2D.Double(50,(this.getHeight()-Schema.DashBoard2Height)/2,15,Schema.DashBoard2Height);
+			
+		}
 		
-		//super.paintComponent(g);
-	/*	 
+		super.paintComponent(g);
+		
 		Graphics2D g2 = (Graphics2D) g; 
+		g2.drawImage(background, 0, 0, null);
 		
-		g2.setColor(Color.BLACK);
+
+		g2.setBackground(Color.blue);
+		g2.setColor(Color.white);
 		g2.fill(palla);
 		g2.fill(dashBoard2);
 		timer.start();
-		*/
+		
+		
 	}
+
 
 
 	private boolean isCollisioneVerticalePalla(Ellipse2D palla, Rectangle2D rettangolo){
@@ -140,18 +143,54 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
+		
+		
+		if(KeyEvent.VK_DOWN == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard2,campo)){
+			
+			dashBoard2.setRect(50,dashBoard2.getY()+shift,15,Schema.DashBoard2Height);
+		}
+		
+		if(KeyEvent.VK_UP == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard2,campo)){
+			
+			dashBoard2.setRect(50,dashBoard2.getY()-shift,15,Schema.DashBoard2Height);
+		}
+		
+	}
 
-		double y = dashBoard2.getY();
+
+	private boolean isCollisioneDashboardCampoSuperiore(Rectangle2D dashBoard , Rectangle2D campo) {
 		
-		if('k' == arg0.getKeyChar() && y <= (400 - dashBoard2.getHeight()-40) ){
-			
-			dashBoard2.setRect(50,dashBoard2.getY()+14,15,60);
-		}
 		
-		if('i' == arg0.getKeyChar() && y >= 0){
-			
-			dashBoard2.setRect(50,dashBoard2.getY()-14,15,60);
-		}
+		Point2D.Double primoVerticeCampo = new Point2D.Double(campo.getX(),campo.getY());
+		Point2D.Double secondoVerticeCampo = new Point2D.Double(campo.getX()+campo.getWidth(),campo.getY());
+		
+		
+		Point2D.Double primoVerticeDashboard = new Point2D.Double(dashBoard.getX(),dashBoard.getY());
+		Point2D.Double secondoVerticeDashboard = new Point2D.Double(dashBoard.getX()+dashBoard.getWidth(),dashBoard.getY());
+		
+		Line2D linea_superiore_campo = new Line2D.Double(primoVerticeCampo,secondoVerticeCampo);
+		Line2D linea_superiore_dashboard = new Line2D.Double(primoVerticeDashboard,secondoVerticeDashboard);	
+		
+		
+		return linea_superiore_campo.intersects(dashBoard);
+		
+	}
+	
+	private boolean isCollisioneDashboardCampoInferiore(Rectangle2D dashBoard , Rectangle2D campo) {
+		
+		
+		
+		Point2D.Double terzoVerticeCampo = new Point2D.Double(campo.getX(),campo.getY()+campo.getHeight());
+		Point2D.Double quartoVerticeCampo = new Point2D.Double(campo.getX()+campo.getWidth(),campo.getY()+campo.getHeight());
+		
+		Point2D.Double terzoVerticeDashboard = new Point2D.Double(dashBoard.getX(),dashBoard.getY()+dashBoard.getHeight());
+		Point2D.Double quartoVerticeDashboard = new Point2D.Double(dashBoard.getX()+dashBoard.getWidth(),dashBoard.getY()+dashBoard.getHeight());
+		
+		Line2D linea_inferiore_campo = new Line2D.Double(terzoVerticeCampo,quartoVerticeCampo);
+		Line2D linea_inferiore_dashboard = new Line2D.Double(terzoVerticeDashboard,quartoVerticeDashboard);	
+		
+		
+		return linea_inferiore_campo.intersects(dashBoard);
 		
 	}
 
