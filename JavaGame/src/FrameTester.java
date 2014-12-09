@@ -47,7 +47,7 @@ public class FrameTester implements WindowListener {
 		Game game = new Game();
 		game.setTableWidth(width);
 		game.setTableHeight(height);
-		imagePanelTable = new ImagePanel(game);
+		imagePanelTable = new ImagePanel(game,new ImageIcon(Schema.PATH_SFONDO).getImage());
 		imagePanelTable.setFocusable(true);
 		contentPane.add(imagePanelTable);
 		//ImagePanel imagePanelVerde = new ImagePanel(new ImageIcon(verde).getImage());
