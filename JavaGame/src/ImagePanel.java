@@ -32,6 +32,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 
 	Ellipse2D palla;
+	private Rectangle2D.Double dashBoard1;
 	private Rectangle2D.Double dashBoard2;
 	private Rectangle2D.Double campo;
 	private Rectangle2D.Double pallaTest; 
@@ -95,6 +96,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		if (campo ==null){
 			campo = new Rectangle2D.Double(0,0,this.getWidth(),this.getHeight());
+			dashBoard1 = new Rectangle2D.Double(this.getWidth()-50,(this.getHeight()-Schema.DashBoard2Height)/2,15,Schema.DashBoard2Height);
 			dashBoard2 = new Rectangle2D.Double(50,(this.getHeight()-Schema.DashBoard2Height)/2,15,Schema.DashBoard2Height);
 					
 		}
@@ -107,11 +109,13 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 		g2.setBackground(Color.blue);
 		g2.setColor(Color.white);
-		g2.drawString(String.valueOf(secondi), 400, 20);
+		g2.drawString(String.valueOf(secondi), this.getWidth()/2, 20);
 		g2.drawString("Punteggio giocatore 1:   "+ String.valueOf(player1Score), 20, 20);
 		g2.drawString("Punteggio giocatore 2:   "+ String.valueOf(player2Score), 700, 20);
 		g2.fill(palla);
+		g2.fill(dashBoard1);
 		g2.fill(dashBoard2);
+		
 		timer.start();
 		
 		
@@ -173,18 +177,17 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		double x = palla.getX();
 		double y = palla.getY();
 		
-		if(isCollisioneOrizzontalePalla(palla,campo,true) || isCollisioneOrizzontalePalla(palla,dashBoard2,false)) {
+		
+		
+		if(isCollisioneOrizzontalePalla(palla,campo,true) || isCollisioneOrizzontalePalla(palla,dashBoard1,false) || isCollisioneOrizzontalePalla(palla,dashBoard2,false)) {
 			
 			velX = -velX;
 		} 
 		
-		if((isCollisioneVerticalePalla(palla,campo) || isCollisioneVerticalePalla(palla,dashBoard2))) {
+		if((isCollisioneVerticalePalla(palla,campo) || isCollisioneVerticalePalla(palla,dashBoard1) || isCollisioneVerticalePalla(palla,dashBoard2))) {
 			
 			velY = -velY;
-		}
-		
-		
-			
+		}	
 			
 		x = x + velX;
 		y = y + velY;		
@@ -198,15 +201,24 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		
-		
-		if(KeyEvent.VK_DOWN == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard2,campo)){
+		if(KeyEvent.VK_UP == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard1,campo)){
 			
-			dashBoard2.setRect(50,dashBoard2.getY()+shift,15,Schema.DashBoard2Height);
+			dashBoard1.setRect(this.getWidth()-50,dashBoard1.getY()-shift,15,Schema.DashBoard1Height);
 		}
 		
-		if(KeyEvent.VK_UP == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard2,campo)){
+		if(KeyEvent.VK_DOWN == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard1,campo)){
+			
+			dashBoard1.setRect(this.getWidth()-50,dashBoard1.getY()+shift,15,Schema.DashBoard1Height);
+		}
+		
+		if(KeyEvent.VK_W == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard2,campo)){
 			
 			dashBoard2.setRect(50,dashBoard2.getY()-shift,15,Schema.DashBoard2Height);
+		}
+		
+		if(KeyEvent.VK_S == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard2,campo)){
+			
+			dashBoard2.setRect(50,dashBoard2.getY()+shift,15,Schema.DashBoard2Height);
 		}
 		
 	}

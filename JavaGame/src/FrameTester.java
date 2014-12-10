@@ -21,7 +21,7 @@ public class FrameTester implements WindowListener {
 		// Frame
 		frame = new JFrame();
 		frame.setSize(width, height);
-		frame.setTitle("Assault");
+		frame.setTitle(Schema.NOME_GIOCO);
 		frame.setLocation(250, 55);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
