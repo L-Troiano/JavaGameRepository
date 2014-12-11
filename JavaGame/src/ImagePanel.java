@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -43,6 +44,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private int player2Score=0;
 	private int player1Score=0;
 	private int secondi;
+	Clip clip;
 	
 	
 	
@@ -63,7 +65,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		final java.util.Timer countdown = new java.util.Timer();
 		countdown.scheduleAtFixedRate(new TimerTask() {
-            int i = Integer.parseInt("150");
+            int i = Schema.COUNTDOWN;
 			
             public void run() {
                 secondi = i--;
@@ -73,31 +75,21 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
         }, 0, 1000);
 		
 		 File soundFile = new File(Schema.PATH_MUSICA);
-		    AudioInputStream sound;
-			try {
-				sound = AudioSystem.getAudioInputStream(soundFile);
-				
-			    // load the sound into memory (a Clip)
-			    DataLine.Info info = new DataLine.Info(Clip.class, sound.getFormat());
-			    Clip clip = (Clip) AudioSystem.getLine(info);
-			    clip.open(sound);
-			    clip.start();
-			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		 eseguiSuono(soundFile);
 
 	
 		
 	}
+
+
 	
 	
 	public void paintComponent(Graphics g) {
 		
 		if (campo ==null){
 			campo = new Rectangle2D.Double(0,0,this.getWidth(),this.getHeight());
-			dashBoard1 = new Rectangle2D.Double(this.getWidth()-50,(this.getHeight()-Schema.DashBoard2Height)/2,15,Schema.DashBoard2Height);
-			dashBoard2 = new Rectangle2D.Double(50,(this.getHeight()-Schema.DashBoard2Height)/2,15,Schema.DashBoard2Height);
+			dashBoard1 = new Rectangle2D.Double(this.getWidth()-50,(this.getHeight()-Schema.DashBoard2Height)/2,Schema.DashBoard1Width,Schema.DashBoard2Height);
+			dashBoard2 = new Rectangle2D.Double(50,(this.getHeight()-Schema.DashBoard2Height)/2,Schema.DashBoard1Width,Schema.DashBoard2Height);
 					
 		}
 		
@@ -106,17 +98,46 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		Graphics2D g2 = (Graphics2D) g; 
 		g2.drawImage(background, 0, 0, null);
 		
-
-		g2.setBackground(Color.blue);
+		g2.setFont(new Font(g2.getFont().getFontName(),Font.BOLD,12));
+		g2.setColor(Color.red);
+		g2.drawString("Punteggio giocatore 1:   ", 20, 20);
+		g2.drawString("Punteggio giocatore 2:   ", 700, 20);
 		g2.setColor(Color.white);
-		g2.drawString(String.valueOf(secondi), this.getWidth()/2, 20);
-		g2.drawString("Punteggio giocatore 1:   "+ String.valueOf(player1Score), 20, 20);
-		g2.drawString("Punteggio giocatore 2:   "+ String.valueOf(player2Score), 700, 20);
+		g2.drawString(String.valueOf(player1Score), 170, 20);
+		g2.drawString(String.valueOf(player2Score), 850, 20);
+		
+		g2.setFont(new Font(g2.getFont().getFontName(),Font.BOLD,30));
+		g2.drawString(String.valueOf(secondi), this.getWidth()/2-10, 30);		
 		g2.fill(palla);
 		g2.fill(dashBoard1);
 		g2.fill(dashBoard2);
 		
-		timer.start();
+		if(secondi==0){
+				
+			String scritta = ""; 
+			if(player1Score>player2Score){
+				scritta="Player 1 vince";				
+			}
+			else{
+				if(player1Score<player2Score){
+					scritta="Player 2 vince";	
+						
+				}
+				else{
+					scritta="Pareggio";			
+				}
+			}
+			
+			
+			
+			g2.drawString(scritta,this.getWidth()/2-(scritta.length()*10),this.getHeight()/2);
+			chiudiSuono();
+			timer.stop();
+		}else{
+			timer.start();	
+		}
+		
+		
 		
 		
 	}
@@ -203,22 +224,22 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		if(KeyEvent.VK_UP == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard1,campo)){
 			
-			dashBoard1.setRect(this.getWidth()-50,dashBoard1.getY()-shift,15,Schema.DashBoard1Height);
+			dashBoard1.setRect(dashBoard1.getX(),dashBoard1.getY()-shift,Schema.DashBoard1Width,Schema.DashBoard1Height);
 		}
 		
 		if(KeyEvent.VK_DOWN == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard1,campo)){
 			
-			dashBoard1.setRect(this.getWidth()-50,dashBoard1.getY()+shift,15,Schema.DashBoard1Height);
+			dashBoard1.setRect(dashBoard1.getX(),dashBoard1.getY()+shift,Schema.DashBoard1Width,Schema.DashBoard1Height);
 		}
 		
 		if(KeyEvent.VK_W == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard2,campo)){
 			
-			dashBoard2.setRect(50,dashBoard2.getY()-shift,15,Schema.DashBoard2Height);
+			dashBoard2.setRect(dashBoard2.getX(),dashBoard2.getY()-shift,Schema.DashBoard1Width,Schema.DashBoard2Height);
 		}
 		
 		if(KeyEvent.VK_S == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard2,campo)){
 			
-			dashBoard2.setRect(50,dashBoard2.getY()+shift,15,Schema.DashBoard2Height);
+			dashBoard2.setRect(dashBoard2.getX(),dashBoard2.getY()+shift,Schema.DashBoard1Width,Schema.DashBoard2Height);
 		}
 		
 	}
@@ -229,13 +250,8 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		Point2D.Double primoVerticeCampo = new Point2D.Double(campo.getX(),campo.getY());
 		Point2D.Double secondoVerticeCampo = new Point2D.Double(campo.getX()+campo.getWidth(),campo.getY());
-		
-		
-		Point2D.Double primoVerticeDashboard = new Point2D.Double(dashBoard.getX(),dashBoard.getY());
-		Point2D.Double secondoVerticeDashboard = new Point2D.Double(dashBoard.getX()+dashBoard.getWidth(),dashBoard.getY());
-		
-		Line2D linea_superiore_campo = new Line2D.Double(primoVerticeCampo,secondoVerticeCampo);
-		Line2D linea_superiore_dashboard = new Line2D.Double(primoVerticeDashboard,secondoVerticeDashboard);	
+				
+		Line2D linea_superiore_campo = new Line2D.Double(primoVerticeCampo,secondoVerticeCampo);	
 		
 		
 		return linea_superiore_campo.intersects(dashBoard);
@@ -248,18 +264,34 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		Point2D.Double terzoVerticeCampo = new Point2D.Double(campo.getX(),campo.getY()+campo.getHeight());
 		Point2D.Double quartoVerticeCampo = new Point2D.Double(campo.getX()+campo.getWidth(),campo.getY()+campo.getHeight());
-		
-		Point2D.Double terzoVerticeDashboard = new Point2D.Double(dashBoard.getX(),dashBoard.getY()+dashBoard.getHeight());
-		Point2D.Double quartoVerticeDashboard = new Point2D.Double(dashBoard.getX()+dashBoard.getWidth(),dashBoard.getY()+dashBoard.getHeight());
-		
+
 		Line2D linea_inferiore_campo = new Line2D.Double(terzoVerticeCampo,quartoVerticeCampo);
-		Line2D linea_inferiore_dashboard = new Line2D.Double(terzoVerticeDashboard,quartoVerticeDashboard);	
 		
 		
 		return linea_inferiore_campo.intersects(dashBoard);
 		
 	}
 
+	private void eseguiSuono(File soundFile) {
+		AudioInputStream sound;
+		try {
+			sound = AudioSystem.getAudioInputStream(soundFile);
+			
+		    // load the sound into memory (a Clip)
+		    DataLine.Info info = new DataLine.Info(Clip.class, sound.getFormat());
+		    clip = (Clip) AudioSystem.getLine(info);
+		    clip.open(sound);
+		    clip.start();
+		    
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void chiudiSuono(){
+		clip.close();
+	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
