@@ -9,7 +9,7 @@ public class Schema {
 	public final static int DashBoard2Width = 15;
 	public final static int DashBoard2Height = 100;
 	public static final String NOME_GIOCO = "Ultra Pong";
-	public static final int COUNTDOWN = 10;
+	public static final int COUNTDOWN = 30;
 	
 	
 }

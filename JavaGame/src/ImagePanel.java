@@ -39,7 +39,8 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Rectangle2D.Double pallaTest; 
 	Timer timer = new Timer(7,this);
 	int velX=4, velY=4, shift = 20;
-	
+	Font fontScritte = new Font("Arial",Font.BOLD,12);
+	Font fontPunteggi = new Font("Arial",Font.BOLD,30);
 	private Image background;
 	private int player2Score=0;
 	private int player1Score=0;
@@ -57,12 +58,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	 
 		Dimension size = new Dimension(background.getWidth(null), background.getHeight(null));
 		setPreferredSize(size);
-		setLayout(null);
-		palla = new Ellipse2D.Double(1,10,20,20);
-		 		
-		pallaTest = new Rectangle2D.Double(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
-		
-		
+		setLayout(null);		
 		final java.util.Timer countdown = new java.util.Timer();
 		countdown.scheduleAtFixedRate(new TimerTask() {
             int i = Schema.COUNTDOWN;
@@ -87,9 +83,11 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	public void paintComponent(Graphics g) {
 		
 		if (campo ==null){
+			palla = new Ellipse2D.Double(this.getWidth()/2,this.getHeight()/2,20,20);
+			pallaTest = new Rectangle2D.Double(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 			campo = new Rectangle2D.Double(0,0,this.getWidth(),this.getHeight());
-			dashBoard1 = new Rectangle2D.Double(this.getWidth()-50,(this.getHeight()-Schema.DashBoard2Height)/2,Schema.DashBoard1Width,Schema.DashBoard2Height);
-			dashBoard2 = new Rectangle2D.Double(50,(this.getHeight()-Schema.DashBoard2Height)/2,Schema.DashBoard1Width,Schema.DashBoard2Height);
+			dashBoard1 = new Rectangle2D.Double(this.getWidth()-125,(this.getHeight()-Schema.DashBoard1Height)/2,Schema.DashBoard1Width,Schema.DashBoard1Height);
+			dashBoard2 = new Rectangle2D.Double(125,(this.getHeight()-Schema.DashBoard2Height)/2,Schema.DashBoard2Width,Schema.DashBoard2Height);
 					
 		}
 		
@@ -98,15 +96,15 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		Graphics2D g2 = (Graphics2D) g; 
 		g2.drawImage(background, 0, 0, null);
 		
-		g2.setFont(new Font(g2.getFont().getFontName(),Font.BOLD,12));
+		g2.setFont(fontScritte);
 		g2.setColor(Color.red);
 		g2.drawString("Punteggio giocatore 1:   ", 20, 20);
-		g2.drawString("Punteggio giocatore 2:   ", 700, 20);
+		g2.drawString("Punteggio giocatore 2:   ", this.getWidth()-230, 20);
 		g2.setColor(Color.white);
 		g2.drawString(String.valueOf(player1Score), 170, 20);
-		g2.drawString(String.valueOf(player2Score), 850, 20);
+		g2.drawString(String.valueOf(player2Score), this.getWidth()-50, 20);
 		
-		g2.setFont(new Font(g2.getFont().getFontName(),Font.BOLD,30));
+		g2.setFont(fontPunteggi);
 		g2.drawString(String.valueOf(secondi), this.getWidth()/2-10, 30);		
 		g2.fill(palla);
 		g2.fill(dashBoard1);
@@ -129,8 +127,8 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 			}
 			
 			
-			
-			g2.drawString(scritta,this.getWidth()/2-(scritta.length()*10),this.getHeight()/2);
+			g2.setColor(Color.red);
+			g2.drawString(scritta,(this.getWidth()/2)-(scritta.length()*7),this.getHeight()/2);
 			chiudiSuono();
 			timer.stop();
 		}else{
