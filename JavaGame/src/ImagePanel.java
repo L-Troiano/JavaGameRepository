@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +47,20 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private int player1Score=0;
 	private int secondi;
 	Clip clip;
+	private Point2D.Double primoVertice = new Point2D.Double();
+	private Point2D.Double secondoVertice = new Point2D.Double();
+	private Point2D.Double terzoVertice = new Point2D.Double();
+	private Point2D.Double quartoVertice = new Point2D.Double();
+	private java.awt.geom.Line2D.Double linea_sinistra = new Line2D.Double();
+	private java.awt.geom.Line2D.Double linea_destra = new Line2D.Double();
+	private java.awt.geom.Line2D.Double linea_superiore = new Line2D.Double();
+	private java.awt.geom.Line2D.Double linea_inferiore = new Line2D.Double();
+	private Point2D.Double primoVerticeCampo = new Point2D.Double();
+	private Point2D.Double secondoVerticeCampo = new Point2D.Double();
+	private Point2D.Double terzoVerticeCampo = new Point2D.Double();
+	private Point2D.Double quartoVerticeCampo = new Point2D.Double();
+	private java.awt.geom.Line2D.Double linea_superiore_campo = new Line2D.Double();
+	private java.awt.geom.Line2D.Double linea_inferiore_campo = new Line2D.Double();
 	
 	
 	
@@ -145,13 +160,13 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private boolean isCollisioneVerticalePalla(Ellipse2D palla, Rectangle2D rettangolo){
 		
 		
-		Point2D.Double primoVertice = new Point2D.Double(rettangolo.getX(),rettangolo.getY());
-		Point2D.Double secondoVertice = new Point2D.Double(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY());
-		Point2D.Double terzoVertice = new Point2D.Double(rettangolo.getX(),rettangolo.getY()+rettangolo.getHeight());
-		Point2D.Double quartoVertice = new Point2D.Double(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY()+rettangolo.getHeight());
+		primoVertice.setLocation(rettangolo.getX(),rettangolo.getY());
+		secondoVertice.setLocation(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY());
+		terzoVertice.setLocation(rettangolo.getX(),rettangolo.getY()+rettangolo.getHeight());
+		quartoVertice.setLocation(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY()+rettangolo.getHeight());
 		
-		Line2D linea_superiore = new Line2D.Double(primoVertice,secondoVertice);
-		Line2D linea_inferiore = new Line2D.Double(terzoVertice,quartoVertice);
+		linea_superiore.setLine(primoVertice,secondoVertice);
+		linea_inferiore.setLine(terzoVertice,quartoVertice);
 		
 		pallaTest.setRect(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 		
@@ -162,14 +177,14 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private boolean isCollisioneOrizzontalePalla(Ellipse2D palla, Rectangle2D rettangolo,boolean conta){
 		
 		
-		Point2D.Double primoVertice = new Point2D.Double(rettangolo.getX(),rettangolo.getY());
-		Point2D.Double secondoVertice = new Point2D.Double(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY());
-		Point2D.Double terzoVertice = new Point2D.Double(rettangolo.getX(),rettangolo.getY()+rettangolo.getHeight());
-		Point2D.Double quartoVertice = new Point2D.Double(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY()+rettangolo.getHeight());
+		primoVertice.setLocation(rettangolo.getX(),rettangolo.getY());
+		secondoVertice.setLocation(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY());
+		terzoVertice.setLocation(rettangolo.getX(),rettangolo.getY()+rettangolo.getHeight());
+		quartoVertice.setLocation(rettangolo.getX()+rettangolo.getWidth(),rettangolo.getY()+rettangolo.getHeight());
 			
 		
-		Line2D linea_sinistra = new Line2D.Double(primoVertice,terzoVertice);
-		Line2D linea_destra = new Line2D.Double(secondoVertice,quartoVertice);
+		linea_sinistra.setLine(primoVertice,terzoVertice);
+		linea_destra.setLine(secondoVertice,quartoVertice);
 		
 		pallaTest.setRect(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 		
@@ -246,10 +261,10 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private boolean isCollisioneDashboardCampoSuperiore(Rectangle2D dashBoard , Rectangle2D campo) {
 		
 		
-		Point2D.Double primoVerticeCampo = new Point2D.Double(campo.getX(),campo.getY());
-		Point2D.Double secondoVerticeCampo = new Point2D.Double(campo.getX()+campo.getWidth(),campo.getY());
+		primoVerticeCampo.setLocation(campo.getX(),campo.getY());		
+		secondoVerticeCampo.setLocation(campo.getX()+campo.getWidth(),campo.getY());
 				
-		Line2D linea_superiore_campo = new Line2D.Double(primoVerticeCampo,secondoVerticeCampo);	
+		linea_superiore_campo.setLine(primoVerticeCampo,secondoVerticeCampo);	
 		
 		
 		return linea_superiore_campo.intersects(dashBoard);
@@ -260,10 +275,10 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		
 		
-		Point2D.Double terzoVerticeCampo = new Point2D.Double(campo.getX(),campo.getY()+campo.getHeight());
-		Point2D.Double quartoVerticeCampo = new Point2D.Double(campo.getX()+campo.getWidth(),campo.getY()+campo.getHeight());
+		terzoVerticeCampo.setLocation(campo.getX(),campo.getY()+campo.getHeight());
+		quartoVerticeCampo.setLocation(campo.getX()+campo.getWidth(),campo.getY()+campo.getHeight());
 
-		Line2D linea_inferiore_campo = new Line2D.Double(terzoVerticeCampo,quartoVerticeCampo);
+		linea_inferiore_campo.setLine(terzoVerticeCampo,quartoVerticeCampo);
 		
 		
 		return linea_inferiore_campo.intersects(dashBoard);
