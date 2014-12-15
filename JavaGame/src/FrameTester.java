@@ -12,7 +12,7 @@ public class FrameTester implements WindowListener {
 	private ImagePanel imagePanelTable;
 	
 	private static final int width = 1100;
-	private static final int height = 500;
+	private static final int height = 600;
 	
 	public FrameTester() {
 		
@@ -46,7 +46,7 @@ public class FrameTester implements WindowListener {
 		game.setTableWidth(width);
 		game.setTableHeight(height);
 
-		imagePanelTable = new ImagePanel(game,Schema.PATH_SFONDO);
+		imagePanelTable = new ImagePanel(game,Schema.PATH_SFONDO,Schema.PATH_SFONDO_PUNTEGGIO);
 		imagePanelTable.setFocusable(true);
 		contentPane.add(imagePanelTable);
 

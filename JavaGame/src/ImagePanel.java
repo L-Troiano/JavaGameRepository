@@ -11,7 +11,6 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +37,16 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Rectangle2D.Double dashBoard2;
 	private Rectangle2D.Double campo;
 	private Rectangle2D.Double pallaTest; 
-	Timer timer = new Timer(7,this);
-	int velX=4, velY=4, shift = 20;
+	Timer timer = new Timer(30,this);
+	int velX=15, velY=15;
 	Font fontScritte = new Font("Arial",Font.BOLD,12);
 	Font fontPunteggi = new Font("Arial",Font.BOLD,30);
 	private Image background;
 	private int player2Score=0;
 	private int player1Score=0;
 	private int secondi;
+	private int secondiTrascorsi=0;
+	private int secondiTrascorsiTemp=0;
 	Clip clip;
 	private Point2D.Double primoVertice = new Point2D.Double();
 	private Point2D.Double secondoVertice = new Point2D.Double();
@@ -61,25 +62,27 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Point2D.Double quartoVerticeCampo = new Point2D.Double();
 	private java.awt.geom.Line2D.Double linea_superiore_campo = new Line2D.Double();
 	private java.awt.geom.Line2D.Double linea_inferiore_campo = new Line2D.Double();
+	private Image sfondoPunteggio;
 	
 	
 	
-	public ImagePanel(Game game,String image){
+	public ImagePanel(Game game,String image,String sfondoPunteggio){
 		
 
     
 		background = new ImageIcon(image).getImage();
+		this.sfondoPunteggio = new ImageIcon(sfondoPunteggio).getImage();
 		 
 	 
 		Dimension size = new Dimension(background.getWidth(null), background.getHeight(null));
-		setPreferredSize(size);
-		setLayout(null);		
+		setPreferredSize(size);	
 		final java.util.Timer countdown = new java.util.Timer();
 		countdown.scheduleAtFixedRate(new TimerTask() {
             int i = Schema.COUNTDOWN;
 			
             public void run() {
                 secondi = i--;
+                secondiTrascorsi++;
                 if (i< 0)
                 	countdown.cancel();
             }
@@ -98,18 +101,28 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	public void paintComponent(Graphics g) {
 		
 		if (campo ==null){
-			palla = new Ellipse2D.Double(this.getWidth()/2,this.getHeight()/2,20,20);
+			palla = new Ellipse2D.Double((this.getWidth()-Schema.PALLA_WIDTH)/2,(this.getHeight()-Schema.PALLA_HEIGHT)/2,Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
 			pallaTest = new Rectangle2D.Double(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
-			campo = new Rectangle2D.Double(0,0,this.getWidth(),this.getHeight());
-			dashBoard1 = new Rectangle2D.Double(this.getWidth()-125,(this.getHeight()-Schema.DashBoard1Height)/2,Schema.DashBoard1Width,Schema.DashBoard1Height);
-			dashBoard2 = new Rectangle2D.Double(125,(this.getHeight()-Schema.DashBoard2Height)/2,Schema.DashBoard2Width,Schema.DashBoard2Height);
+			campo = new Rectangle2D.Double(0,+100,this.getWidth(),this.getHeight()-100);
+			dashBoard1 = new Rectangle2D.Double(this.getWidth()-125,(this.getHeight()+100-Schema.DASHBOARD1_HEIGHT)/2,Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD1_HEIGHT);
+			dashBoard2 = new Rectangle2D.Double(125,(this.getHeight()+100-Schema.DASHBOARD2_HEIGHT)/2,Schema.DASHBOARD2_WIDTH,Schema.DASHBOARD2_HEIGHT);
 					
 		}
 		
 		super.paintComponent(g);
 		
-		Graphics2D g2 = (Graphics2D) g; 
-		g2.drawImage(background, 0, 0, null);
+		if(secondiTrascorsi!=0 && secondiTrascorsiTemp!=secondiTrascorsi && secondiTrascorsi%Schema.SECONDI_SHIFT_ORIZZONTALE==0){
+			
+			secondiTrascorsiTemp = secondiTrascorsi; // è un valore aggiuntivo per controllare che venga spostato una sola volta la barra ogni tot di secondi
+			dashBoard1.setRect(dashBoard1.getX()-Schema.SHIFT_ORIZZONTALE, dashBoard1.getY(), Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD1_HEIGHT);
+			dashBoard2.setRect(dashBoard2.getX()+Schema.SHIFT_ORIZZONTALE, dashBoard2.getY(), Schema.DASHBOARD2_WIDTH,Schema.DASHBOARD2_HEIGHT);
+
+			
+		}
+		
+		Graphics2D g2 = (Graphics2D) g;
+		g2.drawImage(sfondoPunteggio, 0, 0, null);
+		g2.drawImage(background, 0, 100, null);
 		
 		g2.setFont(fontScritte);
 		g2.setColor(Color.red);
@@ -226,7 +239,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		x = x + velX;
 		y = y + velY;		
 		
-		palla = new Ellipse2D.Double(x,y,20,20);
+		palla.setFrame(x,y,Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
 		repaint();
 		
 	}
@@ -237,22 +250,22 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 		if(KeyEvent.VK_UP == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard1,campo)){
 			
-			dashBoard1.setRect(dashBoard1.getX(),dashBoard1.getY()-shift,Schema.DashBoard1Width,Schema.DashBoard1Height);
+			dashBoard1.setRect(dashBoard1.getX(),dashBoard1.getY()-Schema.SHIFT_VERTICALE,Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD1_HEIGHT);
 		}
 		
 		if(KeyEvent.VK_DOWN == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard1,campo)){
 			
-			dashBoard1.setRect(dashBoard1.getX(),dashBoard1.getY()+shift,Schema.DashBoard1Width,Schema.DashBoard1Height);
+			dashBoard1.setRect(dashBoard1.getX(),dashBoard1.getY()+Schema.SHIFT_VERTICALE,Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD1_HEIGHT);
 		}
 		
 		if(KeyEvent.VK_W == arg0.getKeyCode() && !isCollisioneDashboardCampoSuperiore(dashBoard2,campo)){
 			
-			dashBoard2.setRect(dashBoard2.getX(),dashBoard2.getY()-shift,Schema.DashBoard1Width,Schema.DashBoard2Height);
+			dashBoard2.setRect(dashBoard2.getX(),dashBoard2.getY()-Schema.SHIFT_VERTICALE,Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD2_HEIGHT);
 		}
 		
 		if(KeyEvent.VK_S == arg0.getKeyCode() && !isCollisioneDashboardCampoInferiore(dashBoard2,campo)){
 			
-			dashBoard2.setRect(dashBoard2.getX(),dashBoard2.getY()+shift,Schema.DashBoard1Width,Schema.DashBoard2Height);
+			dashBoard2.setRect(dashBoard2.getX(),dashBoard2.getY()+Schema.SHIFT_VERTICALE,Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD2_HEIGHT);
 		}
 		
 	}
@@ -260,14 +273,15 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 	private boolean isCollisioneDashboardCampoSuperiore(Rectangle2D dashBoard , Rectangle2D campo) {
 		
-		
+		/*
 		primoVerticeCampo.setLocation(campo.getX(),campo.getY());		
 		secondoVerticeCampo.setLocation(campo.getX()+campo.getWidth(),campo.getY());
 				
 		linea_superiore_campo.setLine(primoVerticeCampo,secondoVerticeCampo);	
 		
-		
-		return linea_superiore_campo.intersects(dashBoard);
+	*/	
+		//return linea_superiore_campo.intersects(dashBoard);
+		return dashBoard.getY()-Schema.SHIFT_VERTICALE<campo.getY();
 		
 	}
 	
