@@ -11,8 +11,8 @@ public class FrameTester implements WindowListener {
 	private JFrame frame;
 	private ImagePanel imagePanelTable;
 	
-	private static final int width = 1100;
-	private static final int height = 600;
+	private static final int width = 1200;
+	private static final int height = 650;
 	
 	public FrameTester() {
 		
@@ -20,7 +20,7 @@ public class FrameTester implements WindowListener {
 		frame = new JFrame();
 		frame.setSize(width, height);
 		frame.setTitle(Schema.NOME_GIOCO);
-		frame.setLocation(100, 55);
+		frame.setLocation(50, 5);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
