@@ -14,6 +14,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.Random;
 import java.util.TimerTask;
 
 import javax.sound.sampled.AudioInputStream;
@@ -32,7 +35,9 @@ import javax.swing.Timer;
 public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 
 
-	Ellipse2D palla;
+	PallaExtended palla;
+	private ArrayList<PallaExtended> palle = new ArrayList<PallaExtended>();
+	private ArrayList<BonusExtended> bonus = new ArrayList<BonusExtended>(); 
 	private Rectangle2D.Double dashBoard1;
 	private Rectangle2D.Double dashBoard2;
 	private Rectangle2D.Double campo;
@@ -40,7 +45,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	Timer timer = new Timer(30,this);
 	final java.util.Timer countdownPartita = new java.util.Timer();
 	final java.util.Timer countdownInizio = new java.util.Timer();
-	int velX=10, velY=10;
+	final java.util.Timer timerBonus = new java.util.Timer();
 	Font fontScritte = new Font("Arial",Font.BOLD,12);
 	Font fontPunteggi = new Font("Arial",Font.BOLD,30);
 	private Image background;
@@ -48,7 +53,8 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private Image dashBoardImage;
 	private int player2Score=0;
 	private int player1Score=0;
-	private int secondi = Schema.COUNTDOWN_PARTITA;;
+	private int secondi = Schema.COUNTDOWN_PARTITA;
+	private int secondiBonus = Schema.COUNTDOWN_BONUS;
 	private int secondiTrascorsi=0;
 	private int secondiTrascorsiTemp=0;
 	private int secondiInizio;
@@ -61,13 +67,10 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private java.awt.geom.Line2D.Double linea_destra = new Line2D.Double();
 	private java.awt.geom.Line2D.Double linea_superiore = new Line2D.Double();
 	private java.awt.geom.Line2D.Double linea_inferiore = new Line2D.Double();
-	private Point2D.Double primoVerticeCampo = new Point2D.Double();
-	private Point2D.Double secondoVerticeCampo = new Point2D.Double();
-	private Point2D.Double terzoVerticeCampo = new Point2D.Double();
-	private Point2D.Double quartoVerticeCampo = new Point2D.Double();
-	private java.awt.geom.Line2D.Double linea_superiore_campo = new Line2D.Double();
-	private java.awt.geom.Line2D.Double linea_inferiore_campo = new Line2D.Double();
 	private Image pallaImage;
+	private BonusExtended bonus1 = new BonusExtended(450,300,40,40);
+	private Image multiballImage;
+	
 	
 	
 	
@@ -80,6 +83,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		this.sfondoPunteggio = new ImageIcon(sfondoPunteggio).getImage();
 		this.dashBoardImage = new ImageIcon(Schema.PATH_DASHBOARD).getImage();
 		this.pallaImage = new ImageIcon(Schema.PATH_PALLA).getImage();
+		this.multiballImage = new ImageIcon(Schema.PATH_BONUS_MULTIBALL).getImage();
 		 
 	 
 		Dimension size = new Dimension(background.getWidth(null), background.getHeight(null));
@@ -135,14 +139,24 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 			
 			Schema.DASHBOARD1_HEIGHT= this.getHeight()-Schema.COSTANTE_GRANDEZZA_BOARD*Schema.SHIFT_VERTICALE;
 			Schema.DASHBOARD2_HEIGHT= this.getHeight()-Schema.COSTANTE_GRANDEZZA_BOARD*Schema.SHIFT_VERTICALE;
-			palla = new Ellipse2D.Double((this.getWidth()-Schema.PALLA_WIDTH)/2,(this.getHeight()-Schema.PALLA_HEIGHT)/2,Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
+			palla = new PallaExtended((this.getWidth()-Schema.PALLA_WIDTH)/2,(this.getHeight()-Schema.PALLA_HEIGHT)/2,Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
+			
+			palla.setVelX(Schema.VELOCITA_X_PALLA_PRINCIPALE);
+			palla.setVelY(Schema.VELOCITA_Y_PALLA_PRINCIPALE);
+			
 			pallaTest = new Rectangle2D.Double(palla.getX(),palla.getY(),palla.getWidth(),palla.getHeight());
 			campo = new Rectangle2D.Double(0,+Schema.DISTANZA_TABELLA_PUNTEGGI,this.getWidth(),this.getHeight()-Schema.DISTANZA_TABELLA_PUNTEGGI);
 			dashBoard1 = new Rectangle2D.Double(this.getWidth()-Schema.DISTANZA_LATERALE_BOARD,Schema.DISTANZA_TABELLA_PUNTEGGI+(this.getHeight()-Schema.DISTANZA_TABELLA_PUNTEGGI-Schema.DASHBOARD1_HEIGHT)/2,Schema.DASHBOARD1_WIDTH,Schema.DASHBOARD1_HEIGHT);
 			dashBoard2 = new Rectangle2D.Double(Schema.DISTANZA_LATERALE_BOARD,Schema.DISTANZA_TABELLA_PUNTEGGI+(this.getHeight()-Schema.DISTANZA_TABELLA_PUNTEGGI-Schema.DASHBOARD2_HEIGHT)/2,Schema.DASHBOARD2_WIDTH,Schema.DASHBOARD2_HEIGHT);
 			
+			multiballImage = multiballImage.getScaledInstance((int)bonus1.getWidth(), (int)bonus1.getHeight(), Image.SCALE_DEFAULT);
+			bonus1.setImage(multiballImage);
+			bonus.add(bonus1);
+			
 			dashBoardImage = dashBoardImage.getScaledInstance((int)dashBoard1.getWidth(), (int)dashBoard1.getHeight(), Image.SCALE_DEFAULT);
 			pallaImage = pallaImage.getScaledInstance((int)palla.getWidth(), (int)palla.getHeight(), Image.SCALE_DEFAULT);
+			
+			palle.add(palla);
 					
 		}
 		
@@ -179,11 +193,15 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 			g2.drawString(String.valueOf(secondiInizio), this.getWidth()/2-10, this.getHeight()/2-50);	
 		}
 		
-		
-		g2.drawImage(pallaImage, (int)palla.getX(), (int)palla.getY(), this);
+		for(Ellipse2D pal : palle){
+			g2.drawImage(pallaImage, (int)pal.getX(), (int)pal.getY(), this);
+		}
 		g2.drawImage(dashBoardImage, (int)dashBoard1.getX(), (int)dashBoard1.getY(), this);
 		g2.drawImage(dashBoardImage, (int)dashBoard2.getX(), (int)dashBoard2.getY(), this);
 		
+		for(BonusExtended bon : bonus){
+			g2.drawImage(bon.getImage(), (int)bon.getX(), (int)bon.getY(), this);
+		}
 		
 		if(secondi==0){
 				
@@ -278,19 +296,19 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	}
 	
 
-	private boolean isCollisioneVerticalePallaCampo(Ellipse2D palla, Rectangle2D rettangolo){
+	private boolean isCollisioneVerticalePallaCampo(PallaExtended palla, Rectangle2D rettangolo){
 
-		return palla.getY()+velY<rettangolo.getY() || palla.getY()+palla.getHeight()+velY>rettangolo.getY()+rettangolo.getHeight();
+		return palla.getY()+palla.getVelY()<rettangolo.getY() || palla.getY()+palla.getHeight()+palla.getVelY()>rettangolo.getY()+rettangolo.getHeight();
 
 		
 	}
 	
 	
-	private boolean isCollisioneOrizzontalePallaCampo(Ellipse2D palla, Rectangle2D rettangolo,boolean conta){
+	private boolean isCollisioneOrizzontalePallaCampo(PallaExtended palla, Rectangle2D rettangolo,boolean conta){
 
 		
-		boolean collisioneSinistra = palla.getX()+velX<rettangolo.getX(); 
-		boolean collisioneDestra = palla.getX()+palla.getWidth()+velX>rettangolo.getX()+rettangolo.getWidth();
+		boolean collisioneSinistra = palla.getX()+palla.getVelY()<rettangolo.getX(); 
+		boolean collisioneDestra = palla.getX()+palla.getWidth()+palla.getVelY()>rettangolo.getX()+rettangolo.getWidth();
 		
 		if(conta && collisioneSinistra){
 			player2Score++;
@@ -308,28 +326,35 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		
 		
-		
-		double x = palla.getX();
-		double y = palla.getY();
-		
-		
-		
-		if(isCollisioneOrizzontalePallaCampo(palla,campo,true) || isCollisioneOrizzontalePallaDashBoard(palla,dashBoard1) || isCollisioneOrizzontalePallaDashBoard(palla,dashBoard2))  {
 
+		ListIterator<PallaExtended> iter = palle.listIterator();
+		while(iter.hasNext()){
+			PallaExtended pal = iter.next();
 			
-			velX = -velX;
-		} 
+			
+			ListIterator<BonusExtended> iterBonus = bonus.listIterator();
+			while(iterBonus.hasNext()){
+				BonusExtended bon = iterBonus.next();
+				if(isCollisionePallaBonus(bon,pal )){
+					instanziaPalleAggiuntive(bon,iter,iterBonus);
+				}
+			}
 		
-		if((isCollisioneVerticalePallaCampo(palla,campo)) || isCollisioneVerticalePallaDashBoard(palla,dashBoard1) || isCollisioneVerticalePallaDashBoard(palla,dashBoard2))  {
+			if(isCollisioneOrizzontalePallaCampo(pal,campo,true) || isCollisioneOrizzontalePallaDashBoard(pal,dashBoard1) || isCollisioneOrizzontalePallaDashBoard(pal,dashBoard2))  {
+	
+				pal.setVelX(-1*pal.getVelX());
+				
+			} 
 			
+			if((isCollisioneVerticalePallaCampo(pal,campo)) || isCollisioneVerticalePallaDashBoard(pal,dashBoard1) || isCollisioneVerticalePallaDashBoard(pal,dashBoard2))  {
+				
+				
+				pal.setVelY(-1*pal.getVelY());
+			}	
+				
 			
-			velY = -velY;
-		}	
-			
-		x = x + velX;
-		y = y + velY;		
-		
-		palla.setFrame(x,y,Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
+			pal.setFrame(pal.getX()+pal.getVelX(),pal.getY()+pal.getVelY(),Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
+		}
 		repaint();
 		
 	}
@@ -360,6 +385,9 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 	}
 
+	
+	
+	
 
 	private boolean isCollisioneDashboardCampoSuperiore(Rectangle2D dashBoard , Rectangle2D campo) {
 		
@@ -374,6 +402,55 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 		
 	}
 
+	
+	private boolean isCollisionePallaBonus(Rectangle2D bonus, PallaExtended pal){
+		
+		pallaTest.setRect(pal.getX(),pal.getY(),pal.getWidth(),pal.getHeight());
+		return bonus.intersects(pallaTest);
+	}
+
+	private void instanziaPalleAggiuntive(Rectangle2D bon, final ListIterator<PallaExtended> iter, ListIterator<BonusExtended> iterBonus){
+	
+		for(int i=0; i<Schema.NUMERO_PALLE_MULTIBALL;i++){
+		
+			PallaExtended multiBall = new PallaExtended((int)bon.getX(),(int)bon.getY(),Schema.PALLA_WIDTH,Schema.PALLA_HEIGHT);
+			
+			Random generator = new Random();
+			
+			if(generator.nextBoolean()){
+				multiBall.setVelX(Schema.VELOCITA_X_PALLA_PRINCIPALE);
+			}else{
+				multiBall.setVelX(-1*Schema.VELOCITA_X_PALLA_PRINCIPALE);
+			}
+						
+			if(generator.nextBoolean()){
+				multiBall.setVelY(Schema.VELOCITA_Y_PALLA_PRINCIPALE);
+			}else{
+				multiBall.setVelY(-1*Schema.VELOCITA_Y_PALLA_PRINCIPALE);
+			}
+			
+			iter.add(multiBall);
+		}
+		
+		iterBonus.remove();
+		
+		if(secondiBonus == Schema.COUNTDOWN_BONUS){
+			timerBonus.scheduleAtFixedRate(new TimerTask() {
+	            int i = Schema.COUNTDOWN_BONUS;
+		   		
+	            public void run() {
+
+	            	secondiBonus = i--;
+	                if (i< 0){
+	                	
+	                	timerBonus.cancel();	                	
+	                }
+	            }
+	        }, 0, 1000);
+		}
+	
+	}
+	
 	private void eseguiSuono(File soundFile) {
 		AudioInputStream sound;
 		try {

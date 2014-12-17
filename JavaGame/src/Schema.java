@@ -11,6 +11,8 @@ public class Schema {
 	public final static int PALLA_WIDTH = 20;
 	public final static String NOME_GIOCO = "Ultra Pong";
 	
+	public final static int VELOCITA_X_PALLA_PRINCIPALE = 10;
+	public final static int VELOCITA_Y_PALLA_PRINCIPALE = 10;
 	public final static int SHIFT_ORIZZONTALE = 2;
 	public final static int SHIFT_VERTICALE = 35;
 	public final static int SECONDI_SHIFT_ORIZZONTALE = 7;	
@@ -22,14 +24,20 @@ public class Schema {
 	public final static int COUNTDOWN_PARTITA = 150;
 	
 	
+	
 	public static final String PATH_SFONDO_PUNTEGGIO = "C:/Users/Lorenzo/Desktop/src_java/punteggio.jpg";
 	public static final String PATH_DASHBOARD = "C:/Users/Lorenzo/Desktop/src_java/dashboard.jpg";
+	public static final String PATH_BONUS_MULTIBALL = "C:/Users/Lorenzo/Desktop/src_java/multiball.jpg";
 	public static final String PATH_PALLA = "C:/Users/Lorenzo/Desktop/src_java/palla.png";
 	public final static String PATH_SFONDO = "C:/Users/Lorenzo/Desktop/src_java/table.jpg";
 	public final static String PATH_MUSICA = "C:/Users/Lorenzo/Desktop/src_java/tetris.wav";
 	
 	
 	public static final String MESSAGGIO_ATTESA = "La partita inizierà tra:   ";
+	public static final int NUMERO_PALLE_MULTIBALL = 3;
+	public static final String TIPO_BONUS_MULTIBALL = "M";
+	public static final String TIPO_BONUS_MURO = "W";
+	protected static final int COUNTDOWN_BONUS = 5;
 	
 	
 	
