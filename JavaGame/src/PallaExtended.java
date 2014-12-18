@@ -10,6 +10,7 @@ public class PallaExtended extends Ellipse2D.Double{
 	private static final long serialVersionUID = 1L;
 	private int velX = 0;
 	private int velY = 0;
+	private String codImpatto;
 
 	
 	public PallaExtended(int i, int j, int pallaWidth, int pallaHeight) {
@@ -37,6 +38,16 @@ public class PallaExtended extends Ellipse2D.Double{
 
 	public void setVelY(int velY) {
 		this.velY = velY;
+	}
+
+
+	public String getCodImpatto() {
+		return codImpatto;
+	}
+
+
+	public void setCodImpatto(String codImpatto) {
+		this.codImpatto = codImpatto;
 	}
 
 
