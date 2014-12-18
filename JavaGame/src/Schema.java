@@ -11,8 +11,8 @@ public class Schema {
 	public final static int PALLA_WIDTH = 20;
 	public final static String NOME_GIOCO = "Ultra Pong";
 	
-	public final static int VELOCITA_X_PALLA_PRINCIPALE = 10;
-	public final static int VELOCITA_Y_PALLA_PRINCIPALE = 10;
+	public final static int VELOCITA_X_PALLA_PRINCIPALE = 22;
+	public final static int VELOCITA_Y_PALLA_PRINCIPALE = 18;
 	public final static int SHIFT_ORIZZONTALE = 2;
 	public final static int SHIFT_VERTICALE = 35;
 	public final static int SECONDI_SHIFT_ORIZZONTALE = 7;	
@@ -21,7 +21,7 @@ public class Schema {
 	public static final int DISTANZA_LATERALE_BOARD = 125;
 	
 	public final static int COUNTDOWN_INIZIO = 3;
-	public final static int COUNTDOWN_PARTITA = 150;
+	public final static int COUNTDOWN_PARTITA = 80;
 	protected static final int COUNTDOWN_BONUS = 15;
 	
 	
