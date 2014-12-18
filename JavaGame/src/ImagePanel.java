@@ -93,7 +93,7 @@ public class ImagePanel extends JPanel implements KeyListener, ActionListener {
 	private java.awt.geom.Line2D.Double linea_inferiore = new Line2D.Double();
 
 	private BonusExtended bonus1 = new BonusExtended(450,300,40,40);
-	private BonusExtended bonus2 = new BonusExtended(470,350,40,40);
+	private BonusExtended bonus2 = new BonusExtended(550,460,40,40);
 
 	
 	
