@@ -11,8 +11,8 @@ public class Schema {
 	public final static int PALLA_WIDTH = 20;
 	public final static String NOME_GIOCO = "Ultra Pong";
 	
-	public final static int VELOCITA_X_PALLA_PRINCIPALE = 22;
-	public final static int VELOCITA_Y_PALLA_PRINCIPALE = 18;
+	public final static int VELOCITA_X_PALLA_PRINCIPALE = 16;
+	public final static int VELOCITA_Y_PALLA_PRINCIPALE = 12;
 	public final static int SHIFT_ORIZZONTALE = 2;
 	public final static int SHIFT_VERTICALE = 35;
 	public final static int SECONDI_SHIFT_ORIZZONTALE = 7;	
